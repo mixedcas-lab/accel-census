@@ -125,7 +125,7 @@ APP_RX = [(n, re.compile(p, I)) for n, p in APP_RULES]
 
 # measured silicon (a fabricated chip) as opposed to a simulated architecture
 SILICON_RX = re.compile(r"fabricated|test[- ]?chip|prototype chip|\bmeasured\b|measurement results|silicon[- ](?:proven|verified|measured)|"
-                        r"\btaped[- ]out|die (?:area|photo)", I)
+                        r"\btaped[- ]out|die (?:area|photo)|generation silicon|in production", I)
 SILICON_VENUES = {"ISSCC", "VLSI", "JSSC", "CICC", "A-SSCC", "ESSCIRC", "SSC-L"}
 
 
@@ -310,6 +310,9 @@ MONTHS = {m: i + 1 for i, m in enumerate(
 
 def parse_month(pubdate, year):
     s = (pubdate or "").lower()
+    m = re.match(r"((?:19|20)\d{2})-(\d{2})", s)     # ISO dates from Crossref/OpenAlex
+    if m:
+        return "%s-%s" % m.groups()
     years = re.findall(r"(?:19|20)\d{2}", s)
     y = years[-1] if years else (str(year) if year else None)
     mon = None

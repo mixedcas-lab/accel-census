@@ -55,10 +55,21 @@ def save_json(path, obj, compact=False):
     os.replace(tmp, path)
 
 
-def iter_cache(cache):
-    if not os.path.isdir(cache):
+ACM_CACHE = os.path.join(ROOT, "cache", "acm")    # ISCA (ACM years) and ASPLOS, written by collector/acm.py
+
+
+def iter_cache(cache, extra=None):
+    """IEEE records from the adc-census cache, then the ACM records fetched by collector/acm.py."""
+    for d in [cache] + ([extra] if extra is not None else [ACM_CACHE]):
+        yield from _iter_dir(d)
+
+
+def _iter_dir(cache):
+    if not cache or not os.path.isdir(cache):
         return
     for fn in os.listdir(cache):
+        if fn.startswith("_"):
+            continue
         if fn.endswith(".json"):
             a = load_json(os.path.join(cache, fn), None)
             if a:
@@ -189,7 +200,7 @@ def rebuild(config, cache, run_date):
     dates = [p["d"] for p in papers if p.get("d")]
     meta = {
         "title": "AI Accelerator Census",
-        "source": "IEEE Xplore API (records collected by adc-census)",
+        "source": "IEEE Xplore API (records collected by adc-census); ACM proceedings from Crossref and OpenAlex",
         "updated": run_date,
         "coverage_from": "%d-01" % since if since else "",
         "coverage_to": max(dates) if dates else "",

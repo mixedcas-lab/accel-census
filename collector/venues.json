@@ -1,5 +1,5 @@
 {
- "_comment": "since_year: first publication year shown. cache: the adc-census record cache on this server (overridable with $ACCEL_CENSUS_CACHE or --cache); adc-census collects the digital/architecture venues from 2012. venues: regex on the IEEE publication_title that assigns the venue. ISCA and ASPLOS are not in the IEEE Xplore API.",
+ "_comment": "since_year: first publication year shown. cache: the adc-census record cache on this server (overridable with $ACCEL_CENSUS_CACHE or --cache); adc-census collects the digital/architecture venues from 2012. venues: regex on the IEEE publication_title that assigns the venue. ISCA (ACM years) and ASPLOS are fetched from Crossref/OpenAlex by collector/acm.py into cache/acm.",
  "since_year": 2012,
  "cache": "~/adc-census/cache/raw",
  "venues": [
@@ -74,6 +74,14 @@
   {
    "name": "MICRO",
    "match": "international symposium on microarchitecture"
+  },
+  {
+   "name": "ISCA",
+   "match": "annual international symposium on computer architecture|\\(isca\\)"
+  },
+  {
+   "name": "ASPLOS",
+   "match": "architectural support for programming languages"
   }
  ]
 }

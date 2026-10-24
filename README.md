@@ -16,10 +16,10 @@ AI 가속기(NPU·DNN/Transformer 프로세서)와 Compute-in-Memory(CIM)·Proce
 | 분야 | 학회 | 저널 |
 |---|---|---|
 | 회로 | ISSCC, VLSI Symposium, CICC, ESSCIRC/ESSERC, A-SSCC | JSSC, SSC-L, TCAS-I, JETCAS, TVLSI |
-| 아키텍처 | MICRO, HPCA | IEEE Transactions on Computers, IEEE Micro |
+| 아키텍처 | ISCA, MICRO, HPCA, ASPLOS | IEEE Transactions on Computers, IEEE Micro |
 | 설계자동화 | DAC, ICCAD, DATE | TCAD |
 
-ISCA와 ASPLOS는 ACM Digital Library에만 있어 IEEE Xplore API로 받을 수 없습니다.
+ISCA는 해마다 IEEE와 ACM이 번갈아 출판합니다. IEEE 연도는 adc-census가 IEEE Xplore API로, ACM 연도의 ISCA와 ASPLOS(전부 ACM)는 `collector/acm.py`가 Crossref(목록)와 OpenAlex(초록·소속, CC0)에서 받아 `cache/acm/`에 둡니다(매달 1회, 최근 2년 갱신).
 
 ## 구성
 
@@ -28,7 +28,8 @@ index.html, app.js, style.css   사이트 (빌드 과정 없음, GitHub Pages가
 data/papers.json                논문 목록 (빌더가 생성)
 data/meta.json                  갱신일, 범위, 집계
 data/annotations.csv            검수 값 (사람이 편집)
-collector/build.py              adc-census 캐시를 읽어 papers.json 생성 (Python 3.8+, 표준 라이브러리만)
+collector/build.py              adc-census 캐시와 cache/acm을 읽어 papers.json 생성 (Python 3.8+, 표준 라이브러리만)
+collector/acm.py                ISCA(ACM 연도)·ASPLOS를 Crossref·OpenAlex에서 받아 cache/acm에 저장 (API 키 불필요)
 collector/classify.py           판별, 유형(Digital / CIM·PIM)·구조·응용 태깅, 실측 칩 여부, 수치 추출 규칙
 collector/venues.json           시작 연도, 캐시 위치, venue 매칭 규칙
 scripts/update.sh               랩 서버 cron용: 재생성 → 커밋 → push

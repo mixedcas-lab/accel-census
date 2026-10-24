@@ -14,7 +14,7 @@
   var PRIMARY = ["NVM CIM", "Analog CIM", "Digital CIM", "SRAM CIM", "DRAM/HBM PIM", "Spiking/neuromorphic", "In-sensor",
     "Near-memory", "Sparsity", "Floating point", "Low precision", "Systolic/dataflow", "Reconfigurable"];
   var TYPE_COLORS = { "Digital": "#1f55c4", "CIM/PIM": "#d0365a" };
-  var VENUE_ORDER = ["ISSCC", "VLSI", "JSSC", "CICC", "ESSCIRC", "A-SSCC", "SSC-L", "MICRO", "HPCA", "DAC", "ICCAD", "DATE",
+  var VENUE_ORDER = ["ISSCC", "VLSI", "JSSC", "CICC", "ESSCIRC", "A-SSCC", "SSC-L", "ISCA", "MICRO", "HPCA", "ASPLOS", "DAC", "ICCAD", "DATE",
     "TCAS-I", "JETCAS", "TVLSI", "TCAD", "TC", "IEEE Micro"];
   var KNOWN_APPS = ["Transformer/LLM", "CNN/vision", "Training", "Speech/audio", "Edge/IoT", "Datacenter",
     "Graph/recommendation", "Generative/diffusion", "Autonomous/robotics"];
@@ -932,10 +932,10 @@
       var venues = Object.keys(META.by_venue || {}).length;
       if (ALL.length) {
         $("lede").innerHTML = "<strong>" + nC.toLocaleString() + " AI-accelerator and compute-in-memory papers</strong> from " + venues +
-          " top IEEE circuits, architecture and design-automation venues, " + esc(fmtDate(META.coverage_from)) + " to " + esc(fmtDate(META.coverage_to)) +
+          " top circuits, architecture and design-automation venues, " + esc(fmtDate(META.coverage_from)) + " to " + esc(fmtDate(META.coverage_to)) +
           ". Updated automatically on the 15th of every month; last update " + esc(META.updated || "") + (META.last_run_new ? ", with " + META.last_run_new + " papers added in the latest update." : ".");
       } else {
-        $("lede").textContent = "A monthly index of AI-accelerator and compute-in-memory papers in ISSCC, VLSI, JSSC, CICC, MICRO, HPCA, DAC, ICCAD and other top IEEE venues.";
+        $("lede").textContent = "A monthly index of AI-accelerator and compute-in-memory papers in ISSCC, VLSI, JSSC, CICC, ISCA, MICRO, HPCA, ASPLOS, DAC, ICCAD and other top venues.";
       }
       $("fresh").parentNode.hidden = !META.last_run_new;
 

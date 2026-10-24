@@ -83,12 +83,14 @@ class TestBuild(unittest.TestCase):
         self.tmp = tempfile.mkdtemp()
         self.cache = os.path.join(self.tmp, "cache")
         os.makedirs(self.cache)
-        self._papers, self._meta = build.PAPERS, build.META
+        self._papers, self._meta, self._acm = build.PAPERS, build.META, build.ACM_CACHE
+        build.ACM_CACHE = os.path.join(self.tmp, "acm")
+        os.makedirs(build.ACM_CACHE)
         build.PAPERS = os.path.join(self.tmp, "papers.json")
         build.META = os.path.join(self.tmp, "meta.json")
 
     def tearDown(self):
-        build.PAPERS, build.META = self._papers, self._meta
+        build.PAPERS, build.META, build.ACM_CACHE = self._papers, self._meta, self._acm
         shutil.rmtree(self.tmp)
 
     def put(self, n, title, pub, abstract="", year=2025):
@@ -107,16 +109,28 @@ class TestBuild(unittest.TestCase):
         self.put(4, "A DNN Accelerator", "2025 28th Asia and South Pacific Design Automation Conference (ASP-DAC)")
         self.put(7, "A Mobile Application Processor in 4 nm", "IEEE Journal of Solid-State Circuits", "It integrates an NPU.")
         self.put(5, "An Old Neural Network Processor", "IEEE Journal of Solid-State Circuits", year=2005)
+        with open(os.path.join(build.ACM_CACHE, "acm_3620666.3651324.json"), "w") as f:
+            json.dump({"article_number": "acm:3620666.3651324", "doi": "10.1145/3620666.3651324", "publisher": "ACM",
+                       "title": "A Sparse Transformer Accelerator With Token Pruning",
+                       "publication_title": "Proceedings of the 29th ACM International Conference on Architectural Support for "
+                                            "Programming Languages and Operating Systems, Volume 2",
+                       "abstract": "We simulate it with gem5.", "publication_year": 2024, "publication_date": "2024-04-27",
+                       "content_type": "Conferences", "html_url": "https://doi.org/10.1145/3620666.3651324",
+                       "authors": {"authors": [{"full_name": "B. Lee", "author_order": 1, "affiliation": "Seoul National University, South Korea"}]}}, f)
+        with open(os.path.join(build.ACM_CACHE, "_state.json"), "w") as f:
+            f.write("{}")
         meta = build.rebuild(config, self.cache, "2026-10-24")
         papers = {p["id"]: p for p in build.load_json(build.PAPERS, [])}
-        self.assertEqual(set(papers), {"1", "3", "7"})
+        self.assertEqual(set(papers), {"1", "3", "7", "acm:3620666.3651324"})
+        a = papers["acm:3620666.3651324"]
+        self.assertEqual((a["v"], a["y"], a["d"], a["si"], a["cn"]), ("ASPLOS", 2024, "2024-04", False, ["South Korea"]))
         self.assertEqual((papers["7"]["lv"], papers["7"]["s"], papers["7"]["sys"]), ("related", {}, True))
         p = papers["1"]
         self.assertEqual((p["v"], p["ty"], p["si"], p["cn"], p["x"]["eff_calc"], p["x"]["aeff_calc"]),
                          ("JSSC", "Digital", True, ["South Korea"], 8.2, 2.05))
         self.assertEqual((papers["3"]["v"], papers["3"]["si"]), ("MICRO", False))
         self.assertNotIn("abstract", json.dumps(list(papers.values())))
-        self.assertEqual((meta["core"], meta["silicon"], meta["last_run_new"]), (2, 1, 0))
+        self.assertEqual((meta["core"], meta["silicon"], meta["last_run_new"]), (3, 1, 0))
 
 
 if __name__ == "__main__":
