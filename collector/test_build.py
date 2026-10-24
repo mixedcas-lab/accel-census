@@ -61,8 +61,17 @@ class TestSpecs(unittest.TestCase):
         self.assertAlmostEqual(s["eff"], 200.0)
 
     def test_memory_and_precision(self):
-        s = C.parse_specs("A 64Kb SRAM CIM macro with INT4 and 8-bit weights", "It integrates 512 KB on-chip SRAM buffer.")
+        s = C.parse_specs("A 64Kb SRAM CIM macro with 8-bit weights", "It integrates 512 KB on-chip SRAM buffer.")
         self.assertEqual((s["mem"], s["prec"]), (8000.0, 8))
+
+    def test_ambiguous_values_are_left_out(self):
+        s = C.parse_specs("A CIM macro with INT4 and INT8 modes",
+                          "It achieves 35.2 TOPS/W at 4b and 9.8 TOPS/W at 8b, consuming 3.1 mW in 28-nm CMOS.")
+        self.assertNotIn("prec", s)
+        self.assertNotIn("eff", s)
+        self.assertEqual((s["p"], s["node"]), (3.1e-3, 28))
+        s = C.parse_specs("A 35.2-TOPS/W CIM macro", "It achieves 35.2 TOPS/W at 4b and 9.8 TOPS/W at 8b.")
+        self.assertEqual(s["eff"], 35.2)
 
     def test_derived(self):
         self.assertEqual(C.derived({"thr": 4.0, "area": 2.0, "p": 0.5}), {"aeff_calc": 2.0, "eff_calc": 8.0})

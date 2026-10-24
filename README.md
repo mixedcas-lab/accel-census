@@ -40,7 +40,7 @@ scripts/update.sh               랩 서버 cron용: 재생성 → 커밋 → pus
 1. **데이터**: adc-census 수집기가 위 학회·저널의 전체 논문을 랩 서버 캐시(`~/adc-census/cache/raw`)에 받아 둡니다(수집 범위는 adc-census `collector/venues.json`). 이 저장소는 캐시를 읽기만 하므로 IEEE API를 따로 쓰지 않습니다.
 2. **분류**: 제목에 compute-in-memory·PIM·CIM이 있거나, 기계학습 워크로드(neural network, DNN, CNN, Transformer, LLM, SNN 등)와 하드웨어(accelerator, processor, NPU, macro, SoC 등)가 함께 있으면 core입니다. 초록에서만 가속기를 언급하면 related입니다. 신경 신호 기록 회로, 기계학습을 *이용한* EDA(배치·배선·타이밍 예측 등), RF·전력 회로의 transformer는 제외합니다.
 3. **실측 칩(Measured silicon)**: 회로 학회·저널 논문이거나 초록에 fabricated·test chip·measured 등이 있으면 실측 칩, 나머지는 시뮬레이션 아키텍처로 봅니다.
-4. **수치**: 제목·초록에서 에너지 효율(TOPS/W; GOPS/mW, fJ/op, pJ/MAC도 환산), 최대 처리량(TOPS), 면적 효율(TOPS/mm²), 전력, 클록, 정밀도(bit), 온칩 메모리, 공정, 면적을 정규식으로 뽑습니다. 여러 값이 있으면 최고값(peak)을 씁니다. 논문에 효율이 없으면 처리량/전력, 처리량/면적으로 계산합니다(≈ 표시).
+4. **수치**: 제목·초록에서 에너지 효율(TOPS/W; GOPS/mW, fJ/op, pJ/MAC도 환산), 최대 처리량(TOPS), 면적 효율(TOPS/mm²), 전력, 클록, 정밀도(bit), 온칩 메모리, 공정, 면적을 정규식으로 뽑습니다. 제목에 적힌 값을 우선 쓰고, 초록에 서로 다른 값이 여럿이면(모드·정밀도·비교 대상별 수치) 추측하지 않고 비워 둡니다. 수치가 없는 논문도 제목·저자·링크와 함께 목록에 나옵니다. 논문에 효율이 없으면 처리량/전력, 처리량/면적으로 계산합니다(≈ 표시).
 5. **공개**: cron이 매일 07:02(adc-census 06:17 갱신 뒤) 재생성하고, 바뀐 것이 있으면 커밋·push합니다.
 
 ## 그래프

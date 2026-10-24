@@ -180,16 +180,6 @@ def _num(s):
     return float(s.replace(",", ""))
 
 
-def _best(rx, text, conv, lo, hi):
-    """Largest plausible value of rx in text (the peak figure of a paper that lists several)."""
-    best = None
-    for m in rx.finditer(text or ""):
-        v = conv(m)
-        if v is not None and lo <= v <= hi and (best is None or v > best):
-            best = v
-    return best
-
-
 def _tops(m):
     return _num(m.group(2)) * _SI[m.group(3).upper()] / 1e12
 
@@ -198,60 +188,81 @@ def _eff(m):
     return _tops(m) * (1e3 if m.group(4) else 1.0)                   # per mW -> per W
 
 
+def _all(rx, text, conv, lo, hi):
+    """Every plausible value of rx in text (values equal to 3 significant digits count once)."""
+    out = {}
+    for m in rx.finditer(text or ""):
+        v = conv(m)
+        if v is not None and lo <= v <= hi:
+            out.setdefault(float("%.3g" % v), v)      # "35.2" and "35.20" are the same value
+    return set(out.values())
+
+
+def _pick(t, a, cands):
+    """A value from the title if the title states one; otherwise from the abstract only when the
+    abstract states exactly one (several values usually mean different modes, precisions or baselines)."""
+    vt, va = cands(t), cands(a)
+    if vt:
+        return max(vt)
+    if len(va) == 1:
+        return va.pop()
+    return None
+
+
+def _eop(m):
+    e = _num(m.group(1)) * _SI[m.group(2).lower()]                           # J per op or per MAC
+    return (2.0 if m.group(3).upper() == "MAC" else 1.0) / e / 1e12 if e > 0 else None
+
+
+def _bits(text):
+    b = {int(x or y) for x, y in PREC_INT_RX.findall(text) if 1 <= int(x or y) <= 32}
+    b |= {int(x) for x in PREC_B_RX.findall(text) if 1 <= int(x) <= 16}
+    b |= {int(x or y) for x, y in PREC_FP_RX.findall(text) if 4 <= int(x or y) <= 64}
+    return b
+
+
+def _nodes(text):
+    v = {int(m.group(1)) for m in NODE_NM_RX.finditer(text) if 2 <= int(m.group(1)) <= 500}
+    return v or {int(round(float(m.group(1)) * 1000)) for m in NODE_UM_RX.finditer(text)}
+
+
+def _powers(text, title=False):
+    rxs = (POWER_TITLE_RX,) if title else (POWER_CTX_RX, POWER_AFTER_RX)
+    return {float("%.3g" % (_num(m.group(1)) * _SI[m.group(2) or ""])) for rx in rxs for m in rx.finditer(text)
+            if 1e-9 <= _num(m.group(1)) * _SI[m.group(2) or ""] <= 1e4}
+
+
+def _mem(m):
+    size = _num(m.group(1)) * {"k": 1e3, "K": 1e3, "M": 1e6, "G": 1e9}[m.group(2)]
+    return size / 8 if m.group(3) in ("b", "bit") else size                    # bytes
+
+
 def parse_specs(title, abstract):
+    """Numbers only where they are unambiguous: a paper that reports several (per mode, precision or
+    baseline) gets no value for that field rather than a guess."""
     t, a = _norm(title or ""), _norm(abstract or "")
     out = {}
-    for text in (t, a):
-        v = _best(EFF_RX, text, _eff, 1e-4, 1e5) or _best(EFF_WATT_RX, text, _tops, 1e-4, 1e5)
-        if v:
-            out["eff"] = v
-            break
-    if "eff" not in out:
-        m = EOP_RX.search(t) or EOP_RX.search(a)
-        if m:
-            e = _num(m.group(1)) * _SI[m.group(2).lower()]                   # J per op or per MAC
-            ops = 2.0 if m.group(3).upper() == "MAC" else 1.0
-            if e > 0 and 1e-4 <= ops / e / 1e12 <= 1e5:
-                out["eff"] = ops / e / 1e12
-    for text in (t, a):
-        v = _best(THR_RX, text, _tops, 1e-5, 1e5)
-        if v:
-            out["thr"] = v
-            break
-    for text in (t, a):
-        v = _best(AEFF_RX, text, _tops, 1e-5, 1e5)
-        if v:
-            out["aeff"] = v
-            break
-    for text in (t, a):
-        v = _best(FREQ_RX, text, lambda m: _num(m.group(1)) * _SI[m.group(2)], 5e6, 5e9)
-        if v:
-            out["f"] = v
-            break
-    m = MEM_RX.search(t) or MEM_RX.search(a)
-    if m:
-        size = _num(m.group(1)) * {"k": 1e3, "K": 1e3, "M": 1e6, "G": 1e9}[m.group(2)]
-        out["mem"] = size / 8 if m.group(3) in ("b", "bit") else size        # bytes
-    bits = [int(x or y) for x, y in PREC_INT_RX.findall(t + " " + a) if 1 <= int(x or y) <= 32]
-    bits += [int(x) for x in PREC_B_RX.findall(t + " " + a) if 1 <= int(x) <= 16]
-    fp = [int(x or y) for x, y in PREC_FP_RX.findall(t + " " + a) if 4 <= int(x or y) <= 64]
-    if bits or fp:
-        out["prec"] = max(bits + fp)
-    m = NODE_NM_RX.search(t) or NODE_NM_RX.search(a)
-    if m and 2 <= int(m.group(1)) <= 500:
-        out["node"] = int(m.group(1))
-    else:
-        m = NODE_UM_RX.search(t) or NODE_UM_RX.search(a)
-        if m:
-            out["node"] = int(round(float(m.group(1)) * 1000))
-    m = POWER_CTX_RX.search(a) or POWER_AFTER_RX.search(a) or POWER_CTX_RX.search(t) or POWER_TITLE_RX.search(t)
-    if m:
-        v = _num(m.group(1)) * _SI[m.group(2) or ""]
-        if 1e-9 <= v <= 1e4:
-            out["p"] = v
-    m = AREA_RX.search(a) or AREA_RX.search(t)
-    if m and 1e-4 <= _num(m.group(1)) <= 5e4:
-        out["area"] = _num(m.group(1))
+    pick = {
+        "eff":  lambda x: _all(EFF_RX, x, _eff, 1e-4, 1e5) | _all(EFF_WATT_RX, x, _tops, 1e-4, 1e5) or _all(EOP_RX, x, _eop, 1e-4, 1e5),
+        "thr":  lambda x: _all(THR_RX, x, _tops, 1e-5, 1e5),
+        "aeff": lambda x: _all(AEFF_RX, x, _tops, 1e-5, 1e5),
+        "f":    lambda x: _all(FREQ_RX, x, lambda m: _num(m.group(1)) * _SI[m.group(2)], 5e6, 5e9),
+        "mem":  lambda x: _all(MEM_RX, x, _mem, 1, 1e12),
+        "area": lambda x: _all(AREA_RX, x, lambda m: _num(m.group(1)), 1e-4, 5e4),
+    }
+    for k, f in pick.items():
+        v = _pick(t, a, f)
+        if v is not None:
+            out[k] = v
+    for k, f in (("prec", _bits), ("node", _nodes)):
+        bt, ba = f(t), f(a)
+        if bt and len(bt) == 1:
+            out[k] = bt.pop()
+        elif not bt and len(ba) == 1:
+            out[k] = ba.pop()
+    v = _pick(t, a, lambda x: _powers(x, title=(x is t)))
+    if v is not None:
+        out["p"] = v
     return out
 
 
