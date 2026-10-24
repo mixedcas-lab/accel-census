@@ -1,0 +1,79 @@
+{
+ "_comment": "since_year: first publication year shown. cache: the adc-census record cache on this server (overridable with $ACCEL_CENSUS_CACHE or --cache); adc-census collects the digital/architecture venues from 2012. venues: regex on the IEEE publication_title that assigns the venue. ISCA and ASPLOS are not in the IEEE Xplore API.",
+ "since_year": 2012,
+ "cache": "~/adc-census/cache/raw",
+ "venues": [
+  {
+   "name": "SSC-L",
+   "match": "solid[- ]state circuits letters"
+  },
+  {
+   "name": "JSSC",
+   "match": "journal of solid[- ]state circuits"
+  },
+  {
+   "name": "TCAS-I",
+   "match": "circuits and systems\\s*(i|1)\\b|regular papers"
+  },
+  {
+   "name": "JETCAS",
+   "match": "emerging and selected topics in circuits"
+  },
+  {
+   "name": "TCAD",
+   "match": "computer-aided design of integrated circuits"
+  },
+  {
+   "name": "TC",
+   "match": "^ieee transactions on computers$"
+  },
+  {
+   "name": "IEEE Micro",
+   "match": "^ieee micro$"
+  },
+  {
+   "name": "TVLSI",
+   "match": "very large scale integration"
+  },
+  {
+   "name": "A-SSCC",
+   "match": "asian solid[- ]state circuits|\\ba-sscc\\b"
+  },
+  {
+   "name": "ESSCIRC",
+   "match": "european solid[- ]state (circuits|device and circuits|electronics research)|\\besscirc\\b|\\besserc\\b"
+  },
+  {
+   "name": "ISSCC",
+   "match": "international solid[- ]state circuits conference|\\bisscc\\b"
+  },
+  {
+   "name": "VLSI",
+   "match": "symposium on vlsi"
+  },
+  {
+   "name": "CICC",
+   "match": "custom integrated circuits conference|\\bcicc\\b"
+  },
+  {
+   "name": "DAC",
+   "match": "^(?!.*asia).*design automation conference"
+  },
+  {
+   "name": "ICCAD",
+   "match": "international conference on computer[- ]aided design"
+  },
+  {
+   "name": "DATE",
+   "match": "design, automation (&|and) test in europe"
+  },
+  {
+   "name": "HPCA",
+   "match": "high[- ]performance computer architecture"
+  },
+  {
+   "name": "MICRO",
+   "match": "international symposium on microarchitecture"
+  }
+ ]
+}

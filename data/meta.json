@@ -1,0 +1,26 @@
+{
+ "title": "AI Accelerator Census",
+ "source": "IEEE Xplore API (records collected by adc-census)",
+ "updated": "2026-10-24",
+ "coverage_from": "2012-01",
+ "coverage_to": "2026-10",
+ "total": 1684,
+ "core": 1545,
+ "by_venue": {
+  "TCAS-I": 411,
+  "TVLSI": 341,
+  "JSSC": 323,
+  "VLSI": 99,
+  "CICC": 68,
+  "ISSCC": 130,
+  "SSC-L": 62,
+  "A-SSCC": 54,
+  "ESSCIRC": 57
+ },
+ "by_type": {
+  "CIM/PIM": 729,
+  "Digital": 816
+ },
+ "silicon": 923,
+ "last_run_new": 5
+}

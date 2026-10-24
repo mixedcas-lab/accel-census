@@ -1,0 +1,4 @@
+id,exclude,type,arch,app,silicon,eff,thr,aeff,p,f,prec,mem,node,area,note,by
+# One row per paper. id = IEEE article number (last number in the Xplore URL). Leave a cell empty to keep the automatic value.
+# exclude=1 drops a false positive. type = Digital or CIM/PIM. silicon = 1 (measured chip) or 0 (simulated). arch/app take several values separated by ";" (e.g. SRAM CIM;Sparsity).
+# Units: eff in TOPS/W; thr in TOPS; aeff in TOPS/mm2; p in W; f in Hz; prec in bit; mem in bytes; node in nm; area in mm2. SI suffixes are fine: 9.4m, 200M, 512k. Use - to remove a wrong value.
