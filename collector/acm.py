@@ -48,7 +48,7 @@ CONFS = [
     ("ICCAD", "International Conference on Computer-Aided Design",
      re.compile(r"international conference on computer[- ]aided design", re.I), None),
     ("DATE", "Design, Automation and Test in Europe",
-     re.compile(r"design,? automation (?:&|and) test in europe", re.I), None),
+     re.compile(r"design,? automation (?:&|&amp;|and) test in europe", re.I), None),
 ]
 JOURNALS = [("TCAD", "0278-0070"), ("TC", "0018-9340"), ("JETCAS", "2156-3357"), ("IEEE Micro", "0272-1732")]
 SKIP = re.compile(r"workshop|companion|adjunct|doctoral|student research", re.I)
@@ -66,8 +66,9 @@ def get(url, tries=4):
         except Exception as e:   # noqa: BLE001 - network hiccups: retry, then give up on this request
             if k == tries - 1:
                 raise
-            log("  retry after", type(e).__name__)
-            time.sleep(5 * (k + 1))
+            busy = getattr(e, "code", None) == 429          # rate limit: back off for longer
+            log("  retry after", type(e).__name__, getattr(e, "code", ""))
+            time.sleep((60 if busy else 5) * (k + 1))
 
 
 def crossref_year(query, rx, year, prefix=None, issn=None):
@@ -97,7 +98,7 @@ def crossref_year(query, rx, year, prefix=None, issn=None):
 
 def name_skip(rx):
     """ISCA's pattern also matches HPCA's title."""
-    return "computer architecture" in rx.pattern and "high" not in rx.pattern
+    return rx is not None and "computer architecture" in rx.pattern and "high" not in rx.pattern
 
 
 def abstract_of(inv):
@@ -214,6 +215,7 @@ def main():
         json.dump(state, open(STATE, "w"))
         return 1
     state["last"] = today.isoformat()
+    state["done"] = []      # the next (monthly) run starts afresh
     json.dump(state, open(STATE, "w"))
     log("done: %d ACM records" % total)
     return 0

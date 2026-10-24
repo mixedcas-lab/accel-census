@@ -12,7 +12,7 @@ PY="${PYTHON:-python3}"
 echo "=== $(date '+%F %T') ==="
 git pull --rebase --quiet origin main || { echo "git pull failed"; exit 1; }
 
-"$PY" collector/acm.py --min-days 25 || echo "ACM fetch failed; building with the cached ACM records"
+"$PY" collector/acm.py --min-days 25 --resume || echo "ACM fetch failed; building with the cached ACM records"
 "$PY" collector/build.py
 status=$?
 
