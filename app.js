@@ -933,7 +933,7 @@
       if (ALL.length) {
         $("lede").innerHTML = "<strong>" + nC.toLocaleString() + " AI-accelerator and compute-in-memory papers</strong> from " + venues +
           " top circuits, architecture and design-automation venues, " + esc(fmtDate(META.coverage_from)) + " to " + esc(fmtDate(META.coverage_to)) +
-          ". Updated automatically on the 15th of every month; last update " + esc(META.updated || "") + (META.last_run_new ? ", with " + META.last_run_new + " papers added in the latest update." : ".");
+          ". Updated automatically on the 15th of every month; last update " + esc(META.updated || "") + (META.last_run_new ? ", with " + META.last_run_new + (META.last_run_new === 1 ? " paper" : " papers") + " added in the latest update." : ".");
       } else {
         $("lede").textContent = "A monthly index of AI-accelerator and compute-in-memory papers in ISSCC, VLSI, JSSC, CICC, ISCA, MICRO, HPCA, ASPLOS, DAC, ICCAD and other top venues.";
       }
