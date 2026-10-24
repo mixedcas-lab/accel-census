@@ -1,37 +1,37 @@
 {
  "title": "AI Accelerator Census",
  "source": "IEEE Xplore API (records collected by adc-census); ACM proceedings from Crossref and OpenAlex",
- "updated": "2026-10-24",
+ "updated": "2026-10-25",
  "coverage_from": "2012-01",
  "coverage_to": "2026-10",
- "total": 3992,
- "core": 3479,
+ "total": 4328,
+ "core": 3784,
  "by_venue": {
   "TCAS-I": 411,
   "TVLSI": 341,
   "JSSC": 323,
+  "TCAD": 432,
   "TC": 182,
   "JETCAS": 172,
   "IEEE Micro": 95,
   "DAC": 413,
   "ISCA": 116,
-  "VLSI": 99,
-  "CICC": 68,
+  "VLSI": 174,
+  "CICC": 109,
   "ASPLOS": 58,
-  "TCAD": 432,
-  "ISSCC": 130,
+  "ISSCC": 236,
   "HPCA": 119,
   "SSC-L": 62,
-  "A-SSCC": 54,
+  "A-SSCC": 104,
   "ICCAD": 222,
   "MICRO": 124,
-  "ESSCIRC": 57,
+  "ESSCIRC": 90,
   "DATE": 1
  },
  "by_type": {
-  "CIM/PIM": 1361,
-  "Digital": 2118
+  "CIM/PIM": 1485,
+  "Digital": 2299
  },
- "silicon": 1007,
- "last_run_new": 0
+ "silicon": 1314,
+ "last_run_new": 207
 }

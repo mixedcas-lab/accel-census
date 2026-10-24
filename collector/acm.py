@@ -67,6 +67,9 @@ def get(url, tries=4):
             if k == tries - 1:
                 raise
             busy = getattr(e, "code", None) == 429          # rate limit: back off for longer
+            wait = int((getattr(e, "headers", None) or {}).get("Retry-After") or 0)
+            if busy and wait > 600:                         # daily budget spent (OpenAlex): retry on the next run
+                raise
             log("  retry after", type(e).__name__, getattr(e, "code", ""))
             time.sleep((60 if busy else 5) * (k + 1))
 
@@ -168,13 +171,17 @@ def main():
     os.makedirs(CACHE, exist_ok=True)
     state = json.load(open(STATE)) if os.path.exists(STATE) else {}
     today = dt.date.today()
+    retry = None      # venue-years that failed last time: retried daily even between monthly fetches
     if args.min_days and state.get("last") and (today - dt.date.fromisoformat(state["last"])).days < args.min_days:
-        log("ACM proceedings fetched on %s; next fetch after %d days" % (state["last"], args.min_days))
-        return 0
+        if not state.get("failed"):
+            log("ACM proceedings fetched on %s; next fetch after %d days" % (state["last"], args.min_days))
+            return 0
+        retry = set(state["failed"])
+        log("retrying %d venue-years that failed: %s" % (len(retry), ", ".join(sorted(retry))))
     since = json.load(open(CONFIG)).get("since_year", 2012)
-    full = args.full or not state.get("last") or bool(args.only)
+    full = args.full or not state.get("last") or bool(args.only) or bool(retry)
     years = range(since if full else today.year - 1, today.year + 1)
-    total, failed = 0, 0
+    total, failed = 0, []
     if not args.resume:
         state["done"] = []
     todo = [(n, q, rx, pre, None) for n, q, rx, pre in CONFS] + [(n, None, None, None, issn) for n, issn in JOURNALS]
@@ -184,6 +191,8 @@ def main():
             continue
         for y in years:
             key = "%s:%d" % (name, y)
+            if retry is not None and key not in retry:
+                continue
             if args.resume and key in state.get("done", []):
                 continue
             try:
@@ -191,7 +200,7 @@ def main():
                 oa = openalex(sorted(cr)) if cr else {}
             except Exception as e:   # noqa: BLE001 - one failed venue-year must not stop the rest
                 log("%s %d: FAILED (%s) - rerun with --resume" % (name, y, e))
-                failed += 1
+                failed.append(key)
                 continue
             if not cr:
                 state.setdefault("done", []).append(key)
@@ -211,10 +220,13 @@ def main():
             total += len(cr)
             time.sleep(1)
     if failed:
-        log("%d venue-years failed; the next run retries them" % failed)
+        log("%d venue-years failed; the next run retries them" % len(failed))
+        state["failed"] = sorted(set(failed))
         json.dump(state, open(STATE, "w"))
         return 1
-    state["last"] = today.isoformat()
+    state.pop("failed", None)
+    if retry is None:
+        state["last"] = today.isoformat()
     state["done"] = []      # the next (monthly) run starts afresh
     json.dump(state, open(STATE, "w"))
     log("done: %d ACM records" % total)
