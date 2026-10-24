@@ -176,11 +176,16 @@ def rebuild(config, cache, run_date):
     venues = config["venues"]
     since = config.get("since_year")
     old = {p["id"]: p for p in load_json(PAPERS, [])}
-    papers = []
-    for a in iter_cache(cache):
+    papers, seen = [], set()
+    for a in iter_cache(cache):      # IEEE records first, so a Crossref/OpenAlex copy of the same DOI is dropped
+        doi = (a.get("doi") or "").lower()
+        if doi and doi in seen:
+            continue
         r = build_record(a, venues)
         if not r or (since and r["y"] and r["y"] < since):
             continue
+        if doi:
+            seen.add(doi)
         prev = old.get(r["id"])
         # papers that appear because the adc-census back-catalogue sweep reached an older year are not "new"
         recent = (r["y"] or 0) >= int(run_date[:4]) - 1
@@ -212,7 +217,7 @@ def rebuild(config, cache, run_date):
         "by_venue": by_venue,
         "by_type": by_type,
         "silicon": sum(1 for p in papers if p["lv"] == "core" and p.get("si")),
-        "last_run_new": sum(1 for p in papers if p["first"] == run_date) if old else 0,   # the first build adds nothing "new"
+        "last_run_new": sum(1 for p in papers if p["first"] == run_date and p["id"] not in old) if old else 0,   # the first build adds nothing "new"
     }
     save_json(META, meta)
     log("wrote %d papers (%d core, %d new)" % (len(papers), meta["core"], meta["last_run_new"]))

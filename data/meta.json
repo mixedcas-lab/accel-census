@@ -4,25 +4,28 @@
  "updated": "2026-10-24",
  "coverage_from": "2012-01",
  "coverage_to": "2026-10",
- "total": 1810,
- "core": 1644,
+ "total": 2220,
+ "core": 1964,
  "by_venue": {
   "TCAS-I": 411,
   "TVLSI": 341,
   "JSSC": 323,
+  "ISCA": 116,
   "VLSI": 99,
   "CICC": 68,
   "ASPLOS": 58,
   "ISSCC": 130,
+  "HPCA": 119,
   "SSC-L": 62,
   "A-SSCC": 54,
+  "MICRO": 124,
   "ESSCIRC": 57,
-  "ISCA": 41
+  "DAC": 2
  },
  "by_type": {
-  "CIM/PIM": 761,
-  "Digital": 883
+  "CIM/PIM": 847,
+  "Digital": 1117
  },
- "silicon": 927,
- "last_run_new": 0
+ "silicon": 934,
+ "last_run_new": 903
 }
