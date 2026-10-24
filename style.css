@@ -277,5 +277,11 @@ select {
 .brand a:first-child img { height: 26px; }
 .brand a:last-child img { height: 15px; }
 .brand-sep { width: 1px; height: 22px; background: var(--rule); }
-@media (prefers-color-scheme: dark) { .brand img { filter: brightness(0) invert(1); opacity: 0.85; } }
+@media (prefers-color-scheme: dark) { .brand:not(.hy) img { filter: brightness(0) invert(1); opacity: 0.85; } }
+.brand.hy a:first-child img { height: 30px; }
+.lab-name { font-weight: 650; font-size: 14px; letter-spacing: .01em; color: var(--ink); text-decoration: none; }
+.lab-name:hover { color: var(--signal); }
+.dedication { margin: 8px 0 18px; font-size: 15px; color: var(--ink-2); font-style: italic; }
+.dedication a { color: inherit; }
+@media (max-width: 760px) { .brand.hy a:first-child img { height: 24px; } .lab-name { font-size: 12.5px; } }
 @media (max-width: 760px) { .brand a:first-child img { height: 21px; } .brand a:last-child img { height: 12px; } }

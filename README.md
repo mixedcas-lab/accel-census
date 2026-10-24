@@ -1,12 +1,12 @@
 <p>
-  <a href="https://mixedcas-lab.github.io/"><img src="assets/mcaslab.png" alt="MCAS Lab" height="34"></a>
-  &nbsp;&nbsp;
-  <a href="https://www.uos.ac.kr"><img src="assets/uos.png" alt="University of Seoul" height="20"></a>
+  <a href="https://www.hanyang.ac.kr"><img src="assets/hanyang.png" alt="Hanyang University" height="34"></a>
 </p>
 
 # AI Accelerator Census
 
-AI 가속기(NPU·DNN/Transformer 프로세서)와 Compute-in-Memory(CIM)·Processing-in-Memory(PIM) 논문을 회로·아키텍처·설계자동화 분야의 상위 IEEE 학회와 저널에서 모아 보여주는 사이트입니다. MCAS Lab(서울시립대학교 첨단융합학부)에서 운영합니다. 자매 사이트: [ADC](https://mixedcas-lab.github.io/adc-census/) · [PLL](https://mixedcas-lab.github.io/pll-census/) · [LDO](https://mixedcas-lab.github.io/ldo-census/) · [PMIC](https://mixedcas-lab.github.io/pmic-census/) Census.
+*For Prof. Ji-Hoon Kim and the [Digital System Architecture Lab (DSAL)](https://dsa.hanyang.ac.kr), Hanyang University*
+
+AI 가속기(NPU·DNN/Transformer 프로세서)와 Compute-in-Memory(CIM)·Processing-in-Memory(PIM) 논문을 회로·아키텍처·설계자동화 분야의 상위 IEEE 학회와 저널에서 모아 보여주는 사이트입니다. 한양대학교 김지훈 교수님의 디지털시스템아키텍처 연구실(DSAL)을 위해 만든 사이트입니다.
 
 - 사이트: https://mixedcas-lab.github.io/accel-census/
 - 데이터 출처: IEEE Xplore API (서지 메타데이터와 링크만 공개, 초록·본문은 올리지 않음)
