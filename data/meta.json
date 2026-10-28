@@ -1,11 +1,11 @@
 {
  "title": "AI Accelerator Census",
  "source": "IEEE Xplore API (records collected by adc-census); ACM proceedings from Crossref and OpenAlex",
- "updated": "2026-10-27",
+ "updated": "2026-10-29",
  "coverage_from": "2012-01",
  "coverage_to": "2026-11",
- "total": 5202,
- "core": 4526,
+ "total": 5208,
+ "core": 4531,
  "by_venue": {
   "TC": 185,
   "TCAS-I": 411,
@@ -16,7 +16,7 @@
   "DAC": 578,
   "IEEE Micro": 96,
   "ISCA": 126,
-  "VLSI": 174,
+  "VLSI": 179,
   "DATE": 466,
   "CICC": 109,
   "ASPLOS": 58,
@@ -29,9 +29,9 @@
   "ESSCIRC": 90
  },
  "by_type": {
-  "CIM/PIM": 1746,
-  "Digital": 2780
+  "CIM/PIM": 1749,
+  "Digital": 2782
  },
- "silicon": 1341,
- "last_run_new": 32
+ "silicon": 1346,
+ "last_run_new": 0
 }
